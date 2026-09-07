@@ -1,0 +1,51 @@
+name: Build TU TIEMPO V0.1.1 INTEGRIDAD
+
+on:
+  push:
+    branches:
+      - time-mirror-poc
+    paths:
+      - "source/TU_TIEMPO_V0.1.1_INTEGRIDAD_SOURCE.zip.b64"
+      - ".github/workflows/build-tu-tiempo-v011.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Decode source archive
+        run: |
+          base64 -d source/TU_TIEMPO_V0.1.1_INTEGRIDAD_SOURCE.zip.b64 > /tmp/tu-tiempo.zip
+          unzip -q /tmp/tu-tiempo.zip -d .
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle 8.13
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 36
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Build debug APK
+        working-directory: time-mirror-android
+        run: gradle :app:assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TU-TIEMPO-V0.1.1-INTEGRIDAD-APK
+          path: time-mirror-android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
