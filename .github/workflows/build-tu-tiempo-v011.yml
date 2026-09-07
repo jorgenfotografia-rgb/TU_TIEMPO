@@ -6,7 +6,7 @@ on:
       - main
       - time-mirror-poc
     paths:
-      - "source/TU_TIEMPO_V0.1.1_INTEGRIDAD_SOURCE.zip.b64"
+      - "source/chunks/**"
       - ".github/workflows/build-tu-tiempo-v011.yml"
   workflow_dispatch:
 
@@ -18,9 +18,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Decode source archive
+      - name: Reassemble source archive
         run: |
-          base64 -d source/TU_TIEMPO_V0.1.1_INTEGRIDAD_SOURCE.zip.b64 > /tmp/tu-tiempo.zip
+          cat source/chunks/part*.b64 > /tmp/tu-tiempo.b64
+          base64 -d /tmp/tu-tiempo.b64 > /tmp/tu-tiempo.zip
           unzip -q /tmp/tu-tiempo.zip -d .
 
       - name: Set up JDK 17
