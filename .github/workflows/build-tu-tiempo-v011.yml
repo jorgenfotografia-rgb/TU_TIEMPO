@@ -3,6 +3,7 @@ name: Build TU TIEMPO V0.1.1 INTEGRIDAD
 on:
   push:
     branches:
+      - main
       - time-mirror-poc
     paths:
       - "source/TU_TIEMPO_V0.1.1_INTEGRIDAD_SOURCE.zip.b64"
